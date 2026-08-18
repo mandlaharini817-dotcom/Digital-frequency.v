@@ -1,0 +1,9 @@
+Input Signal
+     ↓
+Pulse Counter
+     ↓
+Count pulses for 1 second
+     ↓
+Store result in "frequency"
+     ↓
+Frequency in Hz

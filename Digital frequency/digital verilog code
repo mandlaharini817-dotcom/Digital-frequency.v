@@ -1,0 +1,45 @@
+module frequency_counter (
+    input wire clk,
+    input wire reset,
+    input wire signal_in,
+
+    output reg [31:0] frequency
+);
+
+    parameter CLK_FREQ = 50000000;
+
+    reg [31:0] time_count;
+    reg [31:0] pulse_count;
+    reg signal_in_d;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            time_count  <= 0;
+            pulse_count <= 0;
+            frequency   <= 0;
+            signal_in_d <= 0;
+        end
+        else begin
+
+            // Store previous input state
+            signal_in_d <= signal_in;
+
+            // Detect rising edge
+            if (signal_in && !signal_in_d)
+                pulse_count <= pulse_count + 1;
+
+            // 1-second gate time
+            if (time_count < CLK_FREQ - 1) begin
+                time_count <= time_count + 1;
+            end
+            else begin
+                frequency <= pulse_count;
+
+                time_count  <= 0;
+                pulse_count <= 0;
+            end
+
+        end
+    end
+
+endmodule

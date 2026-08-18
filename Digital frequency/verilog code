@@ -1,0 +1,43 @@
+module frequency_counter (
+    input wire clk,          // System clock
+    input wire reset,        // Reset
+    input wire signal_in,    // Input signal whose frequency is measured
+
+    output reg [31:0] frequency
+);
+
+    // Example: 50 MHz system clock
+    parameter CLK_FREQ = 50000000;
+
+    reg [31:0] time_count;
+    reg [31:0] pulse_count;
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            time_count  <= 0;
+            pulse_count <= 0;
+            frequency   <= 0;
+        end
+        else begin
+
+            // Count input pulses
+            if (signal_in)
+                pulse_count <= pulse_count + 1;
+
+            // 1-second measurement window
+            if (time_count < CLK_FREQ - 1) begin
+                time_count <= time_count + 1;
+            end
+            else begin
+                // Store counted pulses as frequency
+                frequency <= pulse_count;
+
+                // Reset counters for next measurement
+                time_count  <= 0;
+                pulse_count <= 0;
+            end
+
+        end
+    end
+
+endmodule
